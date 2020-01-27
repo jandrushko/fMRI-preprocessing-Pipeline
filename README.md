@@ -8,7 +8,7 @@ For this script to work you must:
 - Have ICA-AROMA-master downloaded on your computerand fully compiled (see the AROMA readme file that came with the download for instructions)
 - Have your data setup in the BIDS-standard format
 
-*Note: in the current version I have uploaded I run ICA-AROMA out of a conda invironment. This will need to either be changed or setup on your own system.
+*Note: in the current version I have uploaded I run ICA-AROMA out of a conda environment. This will need to be changed or setup on your own system. The important thing is that ICA-AROMA is run out of a python 2.7 with the necessary dependencies. I have been successfully running ICA-AROMA out of python version 2.7.15.
 
 This pipeline follows the guidelines recommended for ICA-AROMA use: https://www.ncbi.nlm.nih.gov/pubmed/25770991
 
