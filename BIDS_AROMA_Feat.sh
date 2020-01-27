@@ -68,11 +68,11 @@ for subj_dir in sub-* ; do
                     echo 'lowpass sigma set to ' $LP_sigma
                 fi
                 echo 'Running FEAT Pre-Processing (No Temporal Filtering)'
-			    feat PreProcess_${NEWSCAN_no_ext}_NoHP_temp8.fsf
-				echo 'Running ICA AROMA with Non-Aggressive Clean up'
+		feat PreProcess_${NEWSCAN_no_ext}_NoHP_temp8.fsf
+		echo 'Running ICA AROMA'
                 source ~/anaconda2/bin/activate neuro-aroma
                 python $ICAAROMA/ICA_AROMA.py -feat $WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/${NEWSCAN_no_ext}_ICA.feat -den $AROMAMETHOD -out $WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/${NEWSCAN_no_ext}_ICA.feat/ICA_AROMA
-				conda deactivate
+		conda deactivate
                 echo 'ICA AROMA Complete'
                 cd $WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/${NEWSCAN_no_ext}_ICA.feat/ICA_AROMA/
                 if [[ "$AROMAMETHOD" == "nonaggr" ]] ; then
