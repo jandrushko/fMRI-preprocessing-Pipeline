@@ -6,6 +6,7 @@ This bash script is written in Ubuntu 18.04 and utilizes the linux GUI 'Zenity'.
 For this script to work you must:
 - Save the .fsf file and the script to your computer
 - Have ICA-AROMA-master downloaded on your computerand fully compiled (see the AROMA readme file that came with the download for instructions)
+- Have your data setup in the BIDS-standard format
 
 *Note: in the current version I have uploaded I run ICA-AROMA out of a conda invironment. This will need to either be changed or setup on your own system.
 
