@@ -7,6 +7,7 @@ For this script to work you must:
 - Save the .fsf file and the script to your computer. This path is currently set to : /media/4TB/justin/Usask_001_imaging_data_1/BIDS/dataset/. All of this will need to change depending on the location of your non-processed BIDS data.
 - Have ICA-AROMA-master downloaded on your computerand fully compiled (see the AROMA readme file that came with the download for instructions)
 - Have your data setup in the BIDS-standard format
+- Have the .json files to acompany each functional run 
 
 *Note: in the current version I have uploaded I run ICA-AROMA out of a conda environment. This will need to be changed or setup on your own system. The important thing is that ICA-AROMA is run out of a python 2.7 with the necessary dependencies. I have been successfully running ICA-AROMA out of python version 2.7.15.
 
