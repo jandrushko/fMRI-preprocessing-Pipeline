@@ -4,7 +4,7 @@ I have provided a bash script to aid in preprocessing fMRI data using ICA-AROMA.
 This bash script is written in Ubuntu 18.04 and utilizes the linux GUI 'Zenity'. If you do not have zenity, you may find the installation instructions here: https://linuxconfig.org/how-to-use-graphical-widgets-in-bash-scripts-with-zenity#h3-generic-options
 
 For this script to work you must:
-- Save the .fsf file and the script to your computer
+- Save the .fsf file and the script to your computer. This path is currently set to : /media/4TB/justin/Usask_001_imaging_data_1/BIDS/dataset/. All of this will need to change depending on the location of your non-processed BIDS data.
 - Have ICA-AROMA-master downloaded on your computerand fully compiled (see the AROMA readme file that came with the download for instructions)
 - Have your data setup in the BIDS-standard format
 
