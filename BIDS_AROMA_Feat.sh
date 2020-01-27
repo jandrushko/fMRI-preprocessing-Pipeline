@@ -84,12 +84,14 @@ for subj_dir in sub-* ; do
                     Threshstattemp2="${Threshstattemp1:9:12}"
                     Threshstat=$(echo "scale=7; (($Threshstattemp2*0.10))" | bc)
                     fslmaths denoised_func_data_nonaggr_bet -thr $Threshstat -Tmin -bin mask -odt char
-                    set median_intensity [ fsl:exec "${FSLDIR}/bin/fslstats denoised_func_data_nonaggr.nii.gz -k mask -p 50" ]
+                    median_intensity=$(fslstats denoised_func_data_nonaggr.nii.gz -k mask -p 50)
+                    echo 'median intensity = ' $median_intensity
                     fslmaths mask -dilF mask
                     fslmaths denoised_func_data_nonaggr.nii.gz -mas mask denoised_func_data_nonaggr_thresh
                     #intensity normalization
-                    set normmean 10000
-                    set scaling [ expr $normmean / $median_intensity ]
+                    normmean='10000'
+                    scaling=$(echo "scale=9; ($normmean/$median_intensity)" | bc)
+                    echo 'scaling = ' $scaling
                     echo "grand-mean intensity normalisation of the entire 4D dataset by a single multiplicative factor"
                     fslmaths denoised_func_data_nonaggr_thresh -mul $scaling denoised_func_data_nonaggr_intnorm
                     fslmaths denoised_func_data_nonaggr_intnorm -Tmean tempMean
@@ -108,12 +110,12 @@ for subj_dir in sub-* ; do
                     Threshstattemp2="${Threshstattemp1:9:12}"
                     Threshstat=$(echo "scale=7; (($Threshstattemp2*0.10))" | bc)
                     fslmaths denoised_func_data_aggr_bet -thr $Threshstat -Tmin -bin mask -odt char
-                    set median_intensity [ fsl:exec "${FSLDIR}/bin/fslstats denoised_func_data_aggr.nii.gz -k mask -p 50" ]
+                    median_intensity=$(fslstats denoised_func_data_aggr.nii.gz -k mask -p 50)
                     fslmaths mask -dilF mask
                     fslmaths denoised_func_data_aggr.nii.gz -mas mask denoised_func_data_aggr_thresh
                     #intensity normalization
-                    set normmean 10000
-                    set scaling [ expr $normmean / $median_intensity ]
+                    normmean='10000'
+                    scaling=$(echo "scale=9; ($normmean/$median_intensity)" | bc)
                     echo "grand-mean intensity normalisation of the entire 4D dataset by a single multiplicative factor"
                     fslmaths denoised_func_data_aggr_thresh -mul $scaling denoised_func_data_aggr_intnorm
                     fslmaths denoised_func_data_aggr_intnorm -Tmean tempMean
@@ -134,12 +136,12 @@ for subj_dir in sub-* ; do
                     Threshstattemp2="${Threshstattemp1:9:12}"
                     Threshstat=$(echo "scale=7; (($Threshstattemp2*0.10))" | bc)
                     fslmaths denoised_func_data_nonaggr_bet -thr $Threshstat -Tmin -bin mask -odt char
-                    set median_intensity [ fsl:exec "${FSLDIR}/bin/fslstats denoised_func_data_nonaggr.nii.gz -k mask -p 50" ]
+                    median_intensity=$(fslstats denoised_func_data_nonaggr.nii.gz -k mask -p 50)
                     fslmaths mask -dilF mask
                     fslmaths denoised_func_data_nonaggr.nii.gz -mas mask denoised_func_data_nonaggr_thresh
                     #intensity normalization
-                    set normmean 10000
-                    set scaling [ expr $normmean / $median_intensity ]
+                    normmean='10000'
+                    scaling=$(echo "scale=9; ($normmean/$median_intensity)" | bc)
                     echo "grand-mean intensity normalisation of the entire 4D dataset by a single multiplicative factor"
                     fslmaths denoised_func_data_nonaggr_thresh -mul $scaling denoised_func_data_nonaggr_intnorm
                     fslmaths denoised_func_data_nonaggr_intnorm -Tmean tempMean
@@ -159,15 +161,13 @@ for subj_dir in sub-* ; do
                     Threshstattemp2="${Threshstattemp1:9:12}"
                     Threshstat=$(echo "scale=7; (($Threshstattemp2*0.10))" | bc)
                     fslmaths denoised_func_data_aggr_bet -thr $Threshstat -Tmin -bin mask -odt char
-                    set median_intensity [ fsl:exec "${FSLDIR}/bin/fslstats denoised_func_data_aggr.nii.gz -k mask -p 50" ]
-                    #fslstats denoised_func_data_aggr.nii.gz -k mask -p 50
+                    median_intensity=$(fslstats denoised_func_data_aggr.nii.gz -k mask -p 50)
                     fslmaths mask -dilF mask
                     fslmaths denoised_func_data_aggr.nii.gz -mas mask denoised_func_data_aggr_thresh
                     #intensity normalization
-                    set normmean 10000
-                    set scaling [ expr $normmean / $median_intensity ]
+                    normmean='10000'
+                    scaling=$(echo "scale=9; ($normmean/$median_intensity)" | bc)
                     echo "grand-mean intensity normalisation of the entire 4D dataset by a single multiplicative factor"
-                    #set funcdata denoised_func_data_aggr_thresh
                     fslmaths denoised_func_data_aggr_thresh -mul $scaling denoised_func_data_aggr_intnorm
                     fslmaths denoised_func_data_aggr_intnorm -Tmean tempMean
                     fslmaths denoised_func_data_aggr_intnorm -bptf $HP_sigma $LP_sigma -add tempMean denoised_func_data_aggr_highpassedFSL.nii.gz 
