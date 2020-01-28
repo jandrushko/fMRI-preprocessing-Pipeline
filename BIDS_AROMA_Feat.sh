@@ -60,12 +60,14 @@ for subj_dir in sub-* ; do
                 sed 's/DURATION/'$NEWDURATIONZEROS'/g' PreProcess_${NEWSCAN_no_ext}_NoHP_temp7.fsf > PreProcess_${NEWSCAN_no_ext}_NoHP_temp8.fsf
                 HP_sigma=$(echo "scale=9; (1/(2*$NEWDURATIONZEROS*$HighpassFrequency))" | bc)
                 echo 'Highpass sigma set to ' $HP_sigma
+                echo 'Highpass cutoff set to ' $HighpassFrequency 'Hz'
                 if [[ "$LowpassFrequency" == "-1" ]] ; then
                     LP_sigma='-1'
                     echo 'lowpass sigma set to ' $LP_sigma ': Lowpass filtering will be skipped'
                 else 
                     LP_sigma=$(echo "scale=9; (1/(2*$NEWDURATIONZEROS*$LowpassFrequency))" | bc)
                     echo 'lowpass sigma set to ' $LP_sigma
+                    echo 'lowpass cutoff set to ' $LowpassFrequency 'Hz'
                 fi
                 echo 'Running FEAT Pre-Processing (No Temporal Filtering)'
 			    feat PreProcess_${NEWSCAN_no_ext}_NoHP_temp8.fsf
@@ -99,6 +101,7 @@ for subj_dir in sub-* ; do
                     imrm tempMean
                     fslmaths denoised_func_data_nonaggr_highpassedFSL.nii.gz  -Tmean mean_func
                     applywarp -i denoised_func_data_nonaggr_highpassedFSL.nii.gz -o denoised_func_data_nonaggr_highpassedFSL_MNI152.nii.gz -r $WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/${NEWSCAN_no_ext}_ICA.feat/reg/standard.nii.gz --premat=$WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/${NEWSCAN_no_ext}_ICA.feat/reg/example_func2highres.mat -w $WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/${NEWSCAN_no_ext}_ICA.feat/reg/highres2standard_warp.nii.gz
+                    fslmaths denoised_func_data_nonaggr_highpassedFSL_MNI152.nii.gz -mul ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz denoised_func_data_nonaggr_highpassedFSL_MNI152_brain.nii.gz
                     cd $WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/
                     rm -rf PreProcess_${NEWSCAN_no_ext}_NoHP_temp*.fsf
                 elif [[ "$AROMAMETHOD" == "aggr" ]]; then
@@ -111,11 +114,13 @@ for subj_dir in sub-* ; do
                     Threshstat=$(echo "scale=7; (($Threshstattemp2*0.10))" | bc)
                     fslmaths denoised_func_data_aggr_bet -thr $Threshstat -Tmin -bin mask -odt char
                     median_intensity=$(fslstats denoised_func_data_aggr.nii.gz -k mask -p 50)
+                    echo 'median intensity = ' $median_intensity
                     fslmaths mask -dilF mask
                     fslmaths denoised_func_data_aggr.nii.gz -mas mask denoised_func_data_aggr_thresh
                     #intensity normalization
                     normmean='10000'
                     scaling=$(echo "scale=9; ($normmean/$median_intensity)" | bc)
+                    echo 'scaling = ' $scaling
                     echo "grand-mean intensity normalisation of the entire 4D dataset by a single multiplicative factor"
                     fslmaths denoised_func_data_aggr_thresh -mul $scaling denoised_func_data_aggr_intnorm
                     fslmaths denoised_func_data_aggr_intnorm -Tmean tempMean
@@ -123,6 +128,7 @@ for subj_dir in sub-* ; do
                     imrm tempMean
                     fslmaths denoised_func_data_aggr_highpassedFSL.nii.gz  -Tmean mean_func
                     applywarp -i denoised_func_data_aggr_highpassedFSL.nii.gz -o denoised_func_data_aggr_highpassedFSL_MNI152.nii.gz -r $WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/${NEWSCAN_no_ext}_ICA.feat/reg/standard.nii.gz --premat=$WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/${NEWSCAN_no_ext}_ICA.feat/reg/example_func2highres.mat -w $WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/${NEWSCAN_no_ext}_ICA.feat/reg/highres2standard_warp.nii.gz
+                    fslmaths denoised_func_data_aggr_highpassedFSL_MNI152.nii.gz -mul ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz denoised_func_data_aggr_highpassedFSL_MNI152_brain.nii.gz
                     cd $WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/
                     rm -rf PreProcess_${NEWSCAN_no_ext}_NoHP_temp*.fsf
                 elif [[ "$AROMAMETHOD" == "both" ]]; then
@@ -137,11 +143,13 @@ for subj_dir in sub-* ; do
                     Threshstat=$(echo "scale=7; (($Threshstattemp2*0.10))" | bc)
                     fslmaths denoised_func_data_nonaggr_bet -thr $Threshstat -Tmin -bin mask -odt char
                     median_intensity=$(fslstats denoised_func_data_nonaggr.nii.gz -k mask -p 50)
+                    echo 'median intensity = ' $median_intensity
                     fslmaths mask -dilF mask
                     fslmaths denoised_func_data_nonaggr.nii.gz -mas mask denoised_func_data_nonaggr_thresh
                     #intensity normalization
                     normmean='10000'
                     scaling=$(echo "scale=9; ($normmean/$median_intensity)" | bc)
+                    echo 'scaling = ' $scaling
                     echo "grand-mean intensity normalisation of the entire 4D dataset by a single multiplicative factor"
                     fslmaths denoised_func_data_nonaggr_thresh -mul $scaling denoised_func_data_nonaggr_intnorm
                     fslmaths denoised_func_data_nonaggr_intnorm -Tmean tempMean
@@ -149,8 +157,7 @@ for subj_dir in sub-* ; do
                     imrm tempMean
                     fslmaths denoised_func_data_nonaggr_highpassedFSL.nii.gz  -Tmean mean_func
                     applywarp -i denoised_func_data_nonaggr_highpassedFSL.nii.gz -o denoised_func_data_nonaggr_highpassedFSL_MNI152.nii.gz -r $WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/${NEWSCAN_no_ext}_ICA.feat/reg/standard.nii.gz --premat=$WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/${NEWSCAN_no_ext}_ICA.feat/reg/example_func2highres.mat -w $WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/${NEWSCAN_no_ext}_ICA.feat/reg/highres2standard_warp.nii.gz
-                    cd $WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/
-                    rm -rf PreProcess_${NEWSCAN_no_ext}_NoHP_temp*.fsf
+                    fslmaths denoised_func_data_nonaggr_highpassedFSL_MNI152.nii.gz -mul ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz denoised_func_data_nonaggr_highpassedFSL_MNI152_brain.nii.gz
                     # Aggressive ICA-Clean Up
                     echo 'Aggressive ICA-Clean Up'
                     fslmaths denoised_func_data_aggr.nii.gz -Tmean mean_func
@@ -162,11 +169,13 @@ for subj_dir in sub-* ; do
                     Threshstat=$(echo "scale=7; (($Threshstattemp2*0.10))" | bc)
                     fslmaths denoised_func_data_aggr_bet -thr $Threshstat -Tmin -bin mask -odt char
                     median_intensity=$(fslstats denoised_func_data_aggr.nii.gz -k mask -p 50)
+                    echo 'median intensity = ' $median_intensity
                     fslmaths mask -dilF mask
                     fslmaths denoised_func_data_aggr.nii.gz -mas mask denoised_func_data_aggr_thresh
                     #intensity normalization
                     normmean='10000'
                     scaling=$(echo "scale=9; ($normmean/$median_intensity)" | bc)
+                    echo 'scaling = ' $scaling
                     echo "grand-mean intensity normalisation of the entire 4D dataset by a single multiplicative factor"
                     fslmaths denoised_func_data_aggr_thresh -mul $scaling denoised_func_data_aggr_intnorm
                     fslmaths denoised_func_data_aggr_intnorm -Tmean tempMean
@@ -174,6 +183,7 @@ for subj_dir in sub-* ; do
                     imrm tempMean
                     fslmaths denoised_func_data_aggr_highpassedFSL.nii.gz  -Tmean mean_func
                     applywarp -i denoised_func_data_aggr_highpassedFSL.nii.gz -o denoised_func_data_aggr_highpassedFSL_MNI152.nii.gz -r $WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/${NEWSCAN_no_ext}_ICA.feat/reg/standard.nii.gz --premat=$WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/${NEWSCAN_no_ext}_ICA.feat/reg/example_func2highres.mat -w $WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/${NEWSCAN_no_ext}_ICA.feat/reg/highres2standard_warp.nii.gz
+                    fslmaths denoised_func_data_aggr_highpassedFSL_MNI152.nii.gz -mul ${FSLDIR}/data/standard/MNI152_T1_2mm_brain_mask.nii.gz denoised_func_data_aggr_highpassedFSL_MNI152_brain.nii.gz
                     cd $WFOLDER/$subj_dir/$NEWPARTICIPANTSESFOLDER/func/
                     rm -rf PreProcess_${NEWSCAN_no_ext}_NoHP_temp*.fsf
                 else 
