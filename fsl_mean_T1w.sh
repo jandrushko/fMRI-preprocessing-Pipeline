@@ -25,10 +25,10 @@ for subject in sub-* ; do
     if [ -d "$subject" ]; then
     echo ${subject}
     cd $WDIR/$subject/anat-mean/
-    #mkdir anat-mean
-    #flirt -in ses-2/anat/*T1w.nii.gz -ref ses-1/anat/*T1w.nii.gz -dof 12 -out ses-2/anat/${subject}_ses-2_to_ses-1_T1w.nii.gz -omat ses-2/anat/${subject}_ses-2_to_ses-1_T1w.mat
-    #fslmaths ses-1/anat/*T1w.nii.gz -add ses-2/anat/${subject}_ses-2_to_ses-1_T1w.nii.gz -div 2 anat-mean/${subject}_ses-mean_T1w.nii.gz -odt float
-    #fsl_anat -i ${subject}_ses-mean_T1w.nii.gz
+    mkdir anat-mean
+    flirt -in ses-2/anat/*T1w.nii.gz -ref ses-1/anat/*T1w.nii.gz -dof 12 -out ses-2/anat/${subject}_ses-2_to_ses-1_T1w.nii.gz -omat ses-2/anat/${subject}_ses-2_to_ses-1_T1w.mat
+    fslmaths ses-1/anat/*T1w.nii.gz -add ses-2/anat/${subject}_ses-2_to_ses-1_T1w.nii.gz -div 2 anat-mean/${subject}_ses-mean_T1w.nii.gz -odt float
+    fsl_anat -i ${subject}_ses-mean_T1w.nii.gz
     bet ${subject}_ses-mean_T1w.nii.gz ${subject}_ses-mean_T1w_brain.nii.gz -R
     cd $WDIR/
     fi
